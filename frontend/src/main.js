@@ -1,5 +1,15 @@
 import { createApp } from 'vue'
 // import './style.css'
 import App from './App.vue'
+import { router } from './router'
+import components from './components/UI'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+// ниже регестрируются компоненты из массива UI
+components.forEach(component => {
+    app.component(component.name, component) //первое поле определяет имя компонента, второе - сам компонент
+})
+
+app.use(router)
+
+app.mount('#app')
