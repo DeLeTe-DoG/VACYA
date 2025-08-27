@@ -1,14 +1,24 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-builder.Services.AddCors(o => o.AddPolicy("AllowVue", policy =>
-    policy.WithOrigins("https://vacya.netlify.app")
-          .AllowAnyHeader()
-          .AllowAnyMethod()));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Allow", policy =>
+    {
+        policy.WithOrigins(
+                "https://vacya.netlify.app",
+                "http://localhost:5173"   
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
-app.UseCors("AllowVue");
+app.UseRouting();
+
+app.UseCors("Allow");
+
 
 var summaries = new[]
 {
@@ -26,9 +36,8 @@ app.MapGet("/api/weather", () =>
         ))
         .ToArray();
     return forecast;
-});
-
-
+})
+.WithName("GetWeatherForecast"); 
 
 app.Run();
 
