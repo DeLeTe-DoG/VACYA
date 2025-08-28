@@ -100,7 +100,7 @@ import { computed } from 'vue';
 .fetch-button, .clear-button {
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.2s;
