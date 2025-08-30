@@ -7,6 +7,10 @@
         <router-link to="/test">Go to test</router-link>
         <router-link to="/begin">Go to test</router-link>
     </div>
+    <div class="btn">
+        <router-link to="/register">Go to Reg</router-link>
+        <router-link to="/login">Go to Log</router-link>
+    </div>
 </template>
 
 <script>

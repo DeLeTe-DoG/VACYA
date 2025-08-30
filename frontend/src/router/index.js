@@ -18,6 +18,22 @@ const routes = [
         name:'BeginPage',
         path:'/begin',
         component: BeginView,
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: () => import("../components/ApiTester/FromLogin.vue")
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import("../components/ApiTester/FormRegister.vue")
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import("../components/ApiTester/Profile.vue"),
+        meta: { requiresAuth: true }
     }
 ]
 
@@ -25,3 +41,13 @@ export const router = new createRouter({
     routes,
     history: createWebHashHistory()
 })
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('authToken');
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/login');
+  } else {
+    next();
+  }
+});
