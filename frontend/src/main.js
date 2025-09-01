@@ -1,10 +1,12 @@
 import { createApp } from 'vue'
 // import './style.css'
+import './assets/styles/main.scss'
 import App from './App.vue'
 import { router } from './router'
 import components from './components/UI'
 import PageHeader from './components/layouts/PageHeader.vue'
 import axios from 'axios'
+import store from './store'
 
 const app = createApp(App)
 // ниже регестрируются компоненты из массива UI
@@ -26,5 +28,6 @@ axios.interceptors.request.use((config) => {
 
 
 app.use(router)
+app.use(store)
 
 app.mount('#app')

@@ -7,7 +7,10 @@ const routes = [
     {
         name: 'home',
         path: '/',
-        component: () => import('../views/MainView.vue')
+        component: () => import('../views/MainView.vue'),
+        // beforeEnter: (to, from, next) => {
+        //     guard(to, from, next)
+        // }
     },
     {
         name: 'testBackEnd',
@@ -22,7 +25,7 @@ const routes = [
     {
         path: '/login',
         name: 'Login',
-        component: () => import("../components/ApiTester/FromLogin.vue")
+        component: () => import("../views/LoginView.vue")
     },
     {
         path: '/register',
@@ -36,6 +39,16 @@ const routes = [
         meta: { requiresAuth: true }
     }
 ]
+
+const guard = function (to, from, next) {
+    const token = localStorage.getItem('token')
+
+    if(token) {
+        next();
+    } else {
+        router.replace({ path: '/login' })
+    }
+}
 
 export const router = new createRouter({
     routes,
