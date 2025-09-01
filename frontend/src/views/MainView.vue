@@ -1,6 +1,7 @@
 <template>
     <div>
         <h1>Home page!</h1>
+        {{ userInfo }}
         <main-button></main-button> <!--пример использования компонента, он зарегестрирован в components/UI/index.js-->
     </div>
     <div class="btn">
@@ -14,7 +15,13 @@
 </template>
 
 <script>
-    export default {}
+    export default {
+        data() {
+            return{
+                userInfo: localStorage.getItem('user')
+            }
+        }
+    }
 </script>
 
 <style lang="scss" scoped>

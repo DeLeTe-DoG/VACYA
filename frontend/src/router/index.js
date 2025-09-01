@@ -8,9 +8,9 @@ const routes = [
         name: 'home',
         path: '/',
         component: () => import('../views/MainView.vue'),
-        // beforeEnter: (to, from, next) => {
-        //     guard(to, from, next)
-        // }
+        beforeEnter: (to, from, next) => {
+            guard(to, from, next)
+        }
     },
     {
         name: 'testBackEnd',
