@@ -1,23 +1,27 @@
 <template>
-  <div class="register-form">
-    <h2>Регистрация</h2>
-    <form @submit.prevent="handleRegister">
-      <input v-model="userData.Name" type="text" placeholder="Имя" required>
-      <input v-model="userData.Email" type="email" placeholder="Email" required>
-      <input v-model="userData.Password" type="password" placeholder="Пароль" required>
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'Регистрация...' : 'Зарегистрироваться' }}
-      </button>
-    </form>
+  <div class='main'>
+    <div class="register-form">
+      <h2>Регистрация</h2>
+      <form @submit.prevent="handleRegister">
+        <input v-model="userData.Name" type="text" placeholder="Имя" required>
+        <input v-model="userData.Email" type="email" placeholder="Email" required>
+        <input v-model="userData.Password" type="password" placeholder="Пароль" required>
+        <button type="submit" :disabled="loading">
+          {{ loading ? 'Регистрация...' : 'Зарегистрироваться' }}
+        </button>
+      </form>
+      
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
     
-    <div v-if="errorMessage" class="error-message">
-      {{ errorMessage }}
+      <p class="login-link">
+        Есть аккаунт? <router-link to="/login">Войти</router-link>
+      </p>
+      <router-link class="register-link" to="/">Назад</router-link>
     </div>
-
-    <p class="login-link">
-      Есть аккаунт? <router-link to="/login">Войти</router-link>
-    </p>
-    <router-link class="register-link" to="/">Назад</router-link>
+    
+    <img class="picture" src="/public/классная картика на фон.png">
   </div>
 </template>
 
@@ -85,6 +89,20 @@ export default {
 </script>
 
 <style scoped>
+.main{
+  display: flex;
+  flex-direction: row;
+}
+
+.picture{
+  width: 27vw;
+  height: 96vh;
+  border-radius:30px;
+  margin-block: 2vh;
+  margin-right: 2vh;
+
+}
+
 .register-form {
   max-width: 400px;
   margin: 50px auto;

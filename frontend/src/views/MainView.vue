@@ -4,8 +4,8 @@
         <main-button></main-button> <!--пример использования компонента, он зарегестрирован в components/UI/index.js-->
     </div>
     <div class="btn">
-        <router-link to="/test">Go to test</router-link>
-        <router-link to="/begin">Go to test</router-link>
+        <router-link to="/test">Go to test backend</router-link>
+        <router-link to="/begin">Go to test HeaderMenu</router-link>
     </div>
     <div class="btn">
         <router-link to="/register">Go to Reg</router-link>
