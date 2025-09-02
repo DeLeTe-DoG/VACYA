@@ -19,6 +19,9 @@
         <button type="button" :disabled="loading" @click="sendRegister()">
           {{ loading ? "Регистрация..." : "Зарегистрироваться" }}
         </button>
+        <div>
+          <p style="margin-top: 8px;">Я соглашаюсь с <span @click="">политикой конфидециальности</span></p>
+        </div>
       </form>
       <form @submit.prevent="handleLogin" v-else>
         <input
@@ -54,9 +57,10 @@
       <p class="login-link" v-else>
         Нет аккаунта? <span @click="switchToRegister = true">Зарегистрироваться</span>
       </p>
+
     </div>
 
-    <img class="picture" src="/public/классная картика на фон.png" />
+    <img class="picture" src="/src/assets/images/cool-image-from-behind.png" />
   </div>
   <!-- <div class="login-form">
     <h2>Вход в систему</h2>
@@ -66,7 +70,8 @@
       <input v-model="credentials.Password" type="password" placeholder="Пароль" required>
       <button type="submit" :disabled="loading">
         {{ loading ? 'Вход...' : 'Войти' }}
-      </button>
+      </button> 
+      <p style="margin-top: 8px;">Я соглашаюсь с <span @click="">политикой конфидециальности</span></p>
     </form>
     
     <div v-if="errorMessage" class="error-message">

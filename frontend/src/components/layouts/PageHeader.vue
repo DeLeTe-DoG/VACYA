@@ -6,11 +6,11 @@
     <header class="header">
     <div class="side">
         <a class="btn2"> </a> 
-        <img class="btn" src="/public/icons/поиск.png"/>
+        <img class="btn" src="/src/assets/images/icons/search-icon.svg"/>
     </div>
     <div class="side" >
-        <img class="btn" src="/public/icons/уведомления.png"/> 
-        <img class="btn" src="/public/icons/настройки.png"/> 
+        <img class="btn" src=""/> 
+        <img class="btn" src=""/> 
         <div class="btn1">А</div>
     </div>
     </header>
@@ -61,11 +61,11 @@
         width: 36px;
         height: 36px;
         cursor: pointer;
-        background-image: url(/public/icons/меню.png)
+        background-image: url(/frontend/src/assets/images/icons/menu-icon.svg)
     }
     
     :hover.btn2{
-        background-image: url(/public/icons/актив_меню.png);
+        background-image: url(/frontend/src/assets/images/icons/active-menu-icon.svg);
         transition:cubic-bezier(1, 0, 0, 1), 300ms;
     }
 </style>

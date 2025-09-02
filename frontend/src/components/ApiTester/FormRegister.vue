@@ -21,7 +21,7 @@
       <router-link class="register-link" to="/">Назад</router-link>
     </div>
     
-    <img class="picture" src="/public/классная картика на фон.png">
+    <img class="picture" src="/src/assets/images/cool-image-from-behind.png">
   </div>
 </template>
 
