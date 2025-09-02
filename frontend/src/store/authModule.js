@@ -4,12 +4,14 @@ import { router } from "../router";
 
 export const authModule = {
   namespaced: true,
-
+  // state - состояния, тут храним динамические переменные (статичные какие-нибудь будем хранить просто в data компонента)
   state: {
     loading: false,
     errorMessage: "",
     userData: null,
   },
+  // mutations - прост мини функции для изменения стейта
+  // можно конечно менять просто через state.loading например, но принято юзать мутации
   mutations: {
     setLoading(state, bool) {
       state.loading = bool
@@ -21,10 +23,12 @@ export const authModule = {
       state.userData = data
     }
   },
+  // actions - функции для взаимодействия с состояниями, в основном тут всякие запросы.
+  // простенькие функции с обработкой статики пишем просто в методах компонентов
   actions: {
     async handleRegister({ state, commit }, data) {
       try {
-        commit('setLoading', true)
+        commit('setLoading', true)        //коммиты нужны для обращения к мутациям, первый параментр - имя мутации, второй - данные, которые отправляем в мутацию
         commit('setErrorMessage', '')
 
         console.log("Регистрирую:", data);
@@ -38,12 +42,12 @@ export const authModule = {
           throw new Error("Токен не получен");
         }
 
-        localStorage.setItem("token", token);
+        localStorage.setItem("token", token);     // localStorage - типо кеширование данных, они хранятся ни в проекте, а в браузере ваще вроде, удобно если нужно запомнить какие-то данные чтоб затем обратиться к ним с любой точки проекта через localStorage.getItem('token)
 
         // Сохраняем данные пользователя
         commit('setUserData', data)
 
-        router.replace({ path: "/" });
+        router.replace({ path: "/" });      //этот метод заменяет адрес в урле на "/".    в .vue компонентах пишется по другому: this.$router.push('/')
       } catch (error) {
         console.error("Ошибка регистрации:", error);
 
@@ -64,8 +68,6 @@ export const authModule = {
         commit('setErrorMessage', '')
 
         console.log("Пытаюсь войти с:", data);
-
-        // const API_URL = 'http://localhost:5046';
 
         const response = await axios.post(
           `${api}/api/user/login`,

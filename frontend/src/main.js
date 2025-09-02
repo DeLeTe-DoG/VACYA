@@ -19,7 +19,7 @@ app.component("PageHeader", PageHeader)
 axios.defaults.baseURL = 'https://vacya.onrender.com';
 
 axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('tokenoken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
