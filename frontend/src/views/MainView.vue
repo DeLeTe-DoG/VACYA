@@ -9,8 +9,7 @@
         <router-link to="/begin">Go to test HeaderMenu</router-link>
     </div>
     <div class="btn">
-        <router-link to="/register">Go to Reg</router-link>
-        <router-link to="/login">Go to Log</router-link>
+        <router-link to="/auth">Go to Log</router-link>
     </div>
 </template>
 

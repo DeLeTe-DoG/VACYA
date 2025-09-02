@@ -41,7 +41,7 @@ const guard = function (to, from, next) {
     if(token) {
         next();
     } else {
-        router.replace({ path: '/login' })
+        router.replace({ path: '/auth' })
     }
 }
 
@@ -54,7 +54,7 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('authToken');
   
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/login');
+    next('/auth');
   } else {
     next();
   }
