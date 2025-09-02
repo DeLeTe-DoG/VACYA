@@ -1,4 +1,4 @@
-import {api} from "../api";
+import { api } from "../api";
 import axios from "axios";
 import { router } from "../router";
 
@@ -7,21 +7,29 @@ export const authModule = {
 
   state: {
     loading: false,
-    errorMessage: ''
+    errorMessage: "",
+    userData: null,
   },
-  mutations: {},
+  mutations: {
+    setLoading(state, bool) {
+      state.loading = bool
+    },
+    setErrorMessage(state, data) {
+      state.errorMessage = data
+    },
+    setUserData(state, data) {
+      state.userData = data
+    }
+  },
   actions: {
-    async handleRegister({state, commit}, data) {
+    async handleRegister({ state, commit }, data) {
       try {
-        state.loading = true;
-        state.errorMessage = "";
+        commit('setLoading', true)
+        commit('setErrorMessage', '')
 
         console.log("Регистрирую:", data);
 
-        const response = await axios.post(
-          `${api}/api/user/register`,
-          data
-        );
+        const response = await axios.post(`${api}/api/user/register`, data);
         console.log("Регистрация успешна:", response.data);
 
         const token = response.data.token;
@@ -33,29 +41,67 @@ export const authModule = {
         localStorage.setItem("token", token);
 
         // Сохраняем данные пользователя
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            Name: this.userData.Name,
-            Email: this.userData.Email,
-            registrationTime: new Date().toISOString(),
-          })
-        );
+        commit('setUserData', data)
 
-        $router.path = '/'
+        router.replace({ path: "/" });
       } catch (error) {
         console.error("Ошибка регистрации:", error);
 
         if (error.response?.status === 409) {
-          this.errorMessage = "Пользователь уже существует";
+          commit('setErrorMessage', "Пользователь уже существует")
         } else if (error.response?.status === 400) {
-          this.errorMessage = "Неверные данные";
+          commit('setErrorMessage', "Неверные данные")
         } else {
-          this.errorMessage =
-            error.response?.data || error.message || "Ошибка регистрации";
+          commit('setErrorMessage', error.response?.data || error.message || "Ошибка регистрации")
         }
       } finally {
-        this.loading = false;
+        commit('setLoading', false)
+      }
+    },
+    async handleLogin({ state, commit }, data) {
+      try {
+        commit('setLoading', true)
+        commit('setErrorMessage', '')
+
+        console.log("Пытаюсь войти с:", data);
+
+        // const API_URL = 'http://localhost:5046';
+
+        const response = await axios.post(
+          `${api}/api/user/login`,
+          data
+        );
+        console.log("Ответ сервера:", response.data);
+
+        const token = response.data.token;
+
+        if (!token) {
+          throw new Error("Токен не получен от сервера");
+        }
+
+        // Сохраняем токен
+        localStorage.setItem("token", token);
+        console.log("Токен сохранен");
+
+        // Сохраняем основные данные пользователя
+        commit('setUserData', data)
+
+        // Перенаправляем в профиль
+        router.replace({path: "/"});
+      } catch (error) {
+        console.error("Ошибка входа:", error);
+
+        if (error.response?.status === 401) {
+          commit('setErrorMessage', "Неверное имя пользователя или пароль")
+        } else if (error.response?.status === 404) {
+          commit('setErrorMessage', "Сервер не доступен. Попробуйте позже.")
+        } else if (error.code === "NETWORK_ERROR") {
+          commit('setErrorMessage', "Нет соединения с сервером")
+        } else {
+          commit('setErrorMessage', "error.response?.data || error.message || 'Ошибка входа'")            
+        }
+      } finally {
+        commit('setLoading', false)
       }
     },
   },

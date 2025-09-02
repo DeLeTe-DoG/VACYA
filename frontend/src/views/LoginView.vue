@@ -42,7 +42,7 @@
           placeholder="Пароль"
           required
         />
-        <button type="submit" :disabled="loading">
+        <button type="submit" @click="sendLogin" :disabled="loading">
           {{ loading ? "Вход..." : "Войти" }}
         </button>
       </form>
@@ -62,27 +62,6 @@
 
     <img class="picture" src="/src/assets/images/cool-image-from-behind.png" />
   </div>
-  <!-- <div class="login-form">
-    <h2>Вход в систему</h2>
-    <form @submit.prevent="handleLogin">
-      <input v-model="credentials.Name" type="text" placeholder="Имя пользователя" required>
-      <input v-model="credentials.Email" type="email" placeholder="Email" required>
-      <input v-model="credentials.Password" type="password" placeholder="Пароль" required>
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'Вход...' : 'Войти' }}
-      </button> 
-      <p style="margin-top: 8px;">Я соглашаюсь с <span @click="">политикой конфидециальности</span></p>
-    </form>
-    
-    <div v-if="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-
-    <p class="register-link">
-      Нет аккаунта? <router-link to="/register">Зарегистрироваться</router-link>
-    </p>
-    <router-link class="register-link" to="/">Назад</router-link>
-  </div> -->
 </template>
 
 <script>
@@ -104,12 +83,17 @@ export default {
   },
   methods: {
     ...mapActions({
-        handleRegister: 'auth/handleRegister'
+        handleRegister: 'auth/handleRegister',
+        handleLogin: 'auth/handleLogin',
     }),
     sendRegister() {
         const data = this.userData
         this.handleRegister(data)
-    }
+    },
+    sendLogin() {
+        const data = this.userData
+        this.handleLogin(data)
+    },
   },
 };
 </script>

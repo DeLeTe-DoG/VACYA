@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Home page!</h1>
-        {{ userInfo }}
+        {{ userData }}
         <main-button></main-button> <!--пример использования компонента, он зарегестрирован в components/UI/index.js-->
     </div>
     <div class="btn">
@@ -15,12 +15,19 @@
 </template>
 
 <script>
+import { mapState } from 'vuex/dist/vuex.cjs.js';
+
     export default {
         data() {
             return{
-                userInfo: localStorage.getItem('user')
+                // userInfo: localStorage.getItem('user')
             }
-        }
+        },
+        computed: {
+            ...mapState({
+                userData: state => state.auth.userData
+            })
+        },
     }
 </script>
 

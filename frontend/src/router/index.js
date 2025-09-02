@@ -23,19 +23,14 @@ const routes = [
         component: BeginView,
     },
     {
-        path: '/login',
-        name: 'Login',
+        path: '/auth',
+        name: 'Auth',
         component: () => import("../views/LoginView.vue")
-    },
-    {
-        path: '/register',
-        name: 'Register',
-        component: () => import("../components/ApiTester/FormRegister.vue")
     },
     {
         path: '/profile',
         name: 'Profile',
-        component: () => import("../components/ApiTester/Profile.vue"),
+        component: () => import("../views/Profile.vue"),
         meta: { requiresAuth: true }
     }
 ]
