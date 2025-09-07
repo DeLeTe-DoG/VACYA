@@ -8,34 +8,14 @@ export default createStore({
         auth: authModule,
     },
     state: {
-        VisibleMenu: false,
+        visibleMenu: true,
     },
-    actions: {
-        setVisibleMenu({state}, data){
-            state.visibleMenu = data
-        }
-    },
-    methods: {
-        ...mapActions({
-            setVisibleMenu: 'setVisibleMenu'
-        }),
-        openMenu(){
-            this.setVisibleMenu(true)
-        },
-        closeMenu(){
-            this.setVisibleMenu(false)
-        },
-        setVisibleMenu(value) {
-            this.isVisibleMenu = value
+    mutations: {
+        toggleMenu(state) {
+            state.visibleMenu = !state.visibleMenu
         },
     },
-
-    // computed: {
-    //     ...mapState({
-    //         visibleMenu: state => state.visibleMenu
-    //     })
-    // }
-    
+    actions: {},
 })
 
 
