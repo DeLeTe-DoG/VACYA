@@ -103,6 +103,9 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
+  gap: 340px;
+  margin-left: 340px;
 }
 
 .picture {
@@ -111,6 +114,9 @@ export default {
   border-radius: 30px;
   margin-block: 2vh;
   margin-right: 2vh;
+  // display: flex;
+  // align-items: center;
+  // justify-items: end;
 }
 
 .register-form {

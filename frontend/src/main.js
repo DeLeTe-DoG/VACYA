@@ -5,6 +5,7 @@ import App from './App.vue'
 import { router } from './router'
 import components from './components/UI'
 import PageHeader from './components/layouts/PageHeader.vue'
+import Sidebar from './components/layouts/Sidebar.vue'
 import axios from 'axios'
 import store from './store'
 
@@ -14,6 +15,7 @@ components.forEach(component => {
     app.component(component.name, component) //первое поле определяет имя компонента, второе - сам компонент
 })
 app.component("PageHeader", PageHeader)
+app.component("Sidebar", Sidebar)
 
 
 axios.defaults.baseURL = 'https://vacya.onrender.com';

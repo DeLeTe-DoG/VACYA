@@ -4,6 +4,11 @@
       <!-- <a class="btn_menu" @click="openMenu"></a> 
         <a class="btn_search" ></a> -->
       <img
+        class="btn_logo"
+        :style="element2Style"
+        src="/src/assets/images/icons/VACYA.svg"
+      />
+      <img
         @click.stop="toggleMenu"
         class="btn_search"
         src="/src/assets/images/icons/menu-icon.svg"
@@ -32,7 +37,7 @@
       />
       <!-- <a class="btn_notifications"></a> 
         <a class="btn_settings"></a> -->
-      <div class="btn_logo">А</div>
+      <div class="btn_avatar">А</div>
     </div>
   </header>
 </template>
@@ -48,13 +53,17 @@ export default {
     ...mapState({
       visibleMenu: (state) => state.visibleMenu,
     }),
+    element2Style() {
+      return {
+        marginRight: this.visibleMenu ? '75px' : '0px',
+      }}
   },
   methods: {
     ...mapMutations({
         toggleMenu: 'toggleMenu',
     }),
   }
-};
+}
 </script>
 
 
@@ -72,21 +81,14 @@ export default {
   justify-content: space-between;
 }
 
-.rightside {
-  display: flex;
-  align-items: center;
-  margin-right: 25px;
-  gap: 25px;
-}
-
 .side {
   display: flex;
   align-items: center;
-  margin-inline: 25px;
   gap: 25px;
+  margin-inline: 25px;
 }
 
-.btn_logo {
+.btn_avatar {
   width: 40px;
   height: 40px;
   cursor: pointer;
@@ -141,4 +143,10 @@ export default {
 //     background-image: url(/src/assets/images/icons/active-settings-icon.svg);
 //     transition:cubic-bezier(1, 0, 0, 1), 200ms;
 // }
+
+.btn_logo{
+  height: 38px;
+  width: 150px;
+  cursor: pointer;
+}
 </style>
