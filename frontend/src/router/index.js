@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory} from "vue-router";
+import { createRouter, createWebHistory} from "vue-router";
 import BeginView from "../views/BeginView.vue"
 // ниже объявляется массив путей для маршрутизатора vue-router
 // поля name, path и component используем базово обязательно
@@ -47,15 +47,15 @@ const guard = function (to, from, next) {
 
 export const router = new createRouter({
     routes,
-    history: createWebHashHistory()
+    history: createWebHistory()
 })
 
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('authToken');
+// router.beforeEach((to, from, next) => {
+//   const isAuthenticated = !!localStorage.getItem('authToken');
   
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next('/auth');
-  } else {
-    next();
-  }
-});
+//   if (to.meta.requiresAuth && !isAuthenticated) {
+//     next('/auth');
+//   } else {
+//     next();
+//   }
+// });

@@ -1,1 +1,23 @@
 @import url(./reset.scss);
+
+.window{
+    margin: 20px;
+    padding: 25px 20px;
+    background-color: #fff;
+    border-radius: 16px;
+    width: 100%;
+    &__header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        h2{
+            font-size: 24px;
+            padding-bottom: 25px;
+        }
+    }
+    &__body{
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+}

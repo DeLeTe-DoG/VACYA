@@ -35,6 +35,5 @@ export default {
 <style lang="scss" scoped>
   .main_with_sidebar{
     display: flex;
-    gap: 25px;
   }
 </style>

@@ -42,7 +42,7 @@
           placeholder="Пароль"
           required
         />
-        <button type="submit" @click="sendLogin" :disabled="loading">
+        <button type="submit" @click="sendLogin()" :disabled="loading">
           {{ loading ? "Вход..." : "Войти" }}
         </button>
       </form>
