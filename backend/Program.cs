@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using backend.Services;
 using backend.Interfaces;
+using backend.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +19,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Добавление ваших сервисов
-builder.Services.AddSingleton<IUser, UserService>();
 
-// Добавление контроллеров
+builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<IUser>(sp => sp.GetRequiredService<UserService>());
+builder.Services.AddSingleton(new List<WebSiteDTO>());
+builder.Services.AddSingleton<WebsiteService>();
+
+
 builder.Services.AddControllers();
 
 // Добавление аутентификации JWT
@@ -39,6 +44,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Добавление авторизации
 builder.Services.AddAuthorization();
 
+builder.Services.AddHttpClient();
+
+builder.Services.AddHostedService<MonitoringBackgroundService>();
+
 var app = builder.Build();
 
 // Настройка middleware pipeline
@@ -52,5 +61,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/api/info/users", (UserService service) =>
+{
+    var users = service.GetAll();
+    return Results.Ok(users);
+});
+app.MapGet("/api/info/websites", (WebsiteService service) =>
+{
+    var websites = service.GetAll().Select(w => w.URL);
+    return Results.Ok(websites);
+});
 
 app.Run();

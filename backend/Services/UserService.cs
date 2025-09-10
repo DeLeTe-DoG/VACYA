@@ -37,4 +37,9 @@ public class UserService : IUser
     var user = _users.FirstOrDefault(u => u.Name == name);
     return user;
   }
+
+  public List<UserDTO> GetAll()
+  {
+    return _users;
+  }
 }
