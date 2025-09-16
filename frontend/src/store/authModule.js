@@ -70,14 +70,13 @@ export const authModule = {
         commit('setLoading', true)
         commit('setErrorMessage', '')
 
-        // console.log("Пытаюсь войти с:", data);
+        console.log("Пытаюсь войти с:", data);
 
         const response = await axios.post(
           `${api}/api/user/login`,
           data
         );
-        // console.log("Ответ сервера:", response.data);
-        console.log(response.data)
+        console.log("Ответ сервера:", response.data);
 
         const token = response.data.token;
         localStorage.setItem('userData', response.data.user)

@@ -12,26 +12,40 @@ const routes = [
             guard(to, from, next)
         }
     },
-    {
-        name: 'testBackEnd',
-        path: '/test',
-        component: () => import("../views/BackendTest.vue")
-    },
-    {
-        name:'BeginPage',
-        path:'/begin',
-        component: BeginView,
-    },
+    // {
+    //     name: 'testBackEnd',
+    //     path: '/test',
+    //     component: () => import("../views/BackendTest.vue")
+    // },
+    // {
+    //     name:'BeginPage',
+    //     path:'/begin',
+    //     component: BeginView,
+    // },
     {
         path: '/auth',
         name: 'Auth',
-        component: () => import("../views/LoginView.vue")
+        component: () => import("../views/LoginView.vue"),
+        // beforeEnter: (to, from, next) => {
+        //     guard(to, from, next)
+        // }
     },
     {
         path: '/profile',
         name: 'Profile',
         component: () => import("../views/Profile.vue"),
-        meta: { requiresAuth: true }
+        beforeEnter: (to, from, next) => {
+            guard(to, from, next)
+        }
+        // meta: { requiresAuth: true }
+    },
+    {
+        path: '/add-site',
+        name: 'Add-site',
+        component: () => import('../views/AddSiteView.vue'),
+        beforeEnter: (to, from, next) => {
+            guard(to, from, next)
+        }
     }
 ]
 
@@ -41,7 +55,7 @@ const guard = function (to, from, next) {
     if(token) {
         next();
     } else {
-        router.replace({ path: '/auth' })
+        router.push({ path: '/auth' })
     }
 }
 
