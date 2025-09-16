@@ -3,16 +3,19 @@ using backend.Interfaces;
 using backend.JWT;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
+using backend.Services;
 
 [ApiController]
 [Route("api/user")]
 public class UserController : ControllerBase
 {
     private readonly IUser _UserService;
+    private readonly WebsiteService _WebSiteService;
 
-    public UserController(IUser user)
+    public UserController(IUser user, WebsiteService WebSiteService)
     {
         _UserService = user;
+        _WebSiteService = WebSiteService;
     }
 
     [HttpPost("register")]
@@ -69,5 +72,14 @@ public class UserController : ControllerBase
         }
         Console.WriteLine(user.Name);
         return Ok(user);
+    }
+
+    [HttpPost("me")]
+    [Authorize]
+    public ActionResult<WebSiteDTO> Add([FromBody] WebSiteDTO site)
+    {
+        var userName = User.Identity.Name;
+        var data = _WebSiteService.Add(site.URL, userName);
+        return Ok(data);
     }
 }
