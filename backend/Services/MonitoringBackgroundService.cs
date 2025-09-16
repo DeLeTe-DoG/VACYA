@@ -5,16 +5,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System;
 using backend.Models;
+using backend.Services;
 
 public class MonitoringBackgroundService : BackgroundService
 {
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly List<WebSiteDTO> _websites;
-
-    public MonitoringBackgroundService(IHttpClientFactory httpClientFactory, List<WebSiteDTO> websites)
+    private readonly UserService _userService;
+    public MonitoringBackgroundService(IHttpClientFactory httpClientFactory, UserService userService)
     {
         _httpClientFactory = httpClientFactory;
-        _websites = websites;
+        _userService = userService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -23,27 +23,32 @@ public class MonitoringBackgroundService : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            foreach (var site in _websites)
+            var users = _userService.GetAll();
+            foreach (var user  in users)
             {
-                site.LastChecked = DateTime.UtcNow;
-
-                try
+                foreach (var site in user.Sites)
                 {
-                    var response = await client.GetAsync(site.URL, stoppingToken);
-                    site.StatusCode = (int)response.StatusCode;
-                    site.IsAvailable = response.IsSuccessStatusCode;
-                    site.ErrorMessage = site.IsAvailable ? null : response.ReasonPhrase;
-                }
-                catch (Exception ex)
-                {
-                    site.IsAvailable = false;
-                    site.StatusCode = null;
-                    site.ErrorMessage = ex.Message;
-                }
+                    var data = new WebSiteDataDTO { };
+                    data.LastChecked = DateTime.UtcNow;
 
-                await Task.Delay(500, stoppingToken); // небольшая пауза между сайтами
+                    try
+                    {
+                        var response = await client.GetAsync(site.URL, stoppingToken);
+                        data.StatusCode = (int)response.StatusCode;
+                        data.IsAvailable = response.IsSuccessStatusCode;
+                        data.ErrorMessage = data.IsAvailable ? null : response.ReasonPhrase;
+                    }
+                    catch (Exception ex)
+                    {
+                        data.IsAvailable = false;
+                        data.StatusCode = null;
+                        data.ErrorMessage = ex.Message;
+                    }
+                    site.WebSiteData.Add(data);
+
+                    await Task.Delay(500, stoppingToken); // небольшая пауза между сайтами
+                }   
             }
-
             await Task.Delay(5000, stoppingToken); // цикл каждые 5 секунд
         }
     }
