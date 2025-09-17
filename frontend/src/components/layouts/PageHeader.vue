@@ -37,7 +37,7 @@
       />
       <!-- <a class="btn_notifications"></a> 
         <a class="btn_settings"></a> -->
-      <div class="btn_avatar">А</div>
+      <button @click="$router.push({ path: '/profile' })" class="btn_avatar">А</button>
     </div>
   </header>
 </template>
@@ -46,6 +46,7 @@
 import { openBlock } from "vue";
 import { mapState } from "vuex";
 import { mapActions, mapMutations } from "vuex/dist/vuex.cjs.js";
+
 // import openMenu from "/src/store/index.js";
 
 export default {

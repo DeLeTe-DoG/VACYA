@@ -46,7 +46,25 @@ const routes = [
         beforeEnter: (to, from, next) => {
             guard(to, from, next)
         }
-    }
+    },
+    {
+        path: '/tests',
+        name: 'Tests',
+        component: () => import('../views/Tests.vue'),
+        // beforeEnter: (to, from, next) => {
+        //     guard(to, from, next)
+        // }
+    },
+    {
+        path: '/tests/plan-test',
+        name: 'add-plan-test',
+        component: () => import('../views/AddPlanTests.vue'),
+        beforeEnter: (to, from, next) => {
+            guard(to, from, next)
+        }
+    },
+
+
 ]
 
 const guard = function (to, from, next) {
