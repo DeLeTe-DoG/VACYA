@@ -22,7 +22,10 @@
                 </select>
             </label>
         </form>
-        <main-button :disabled="!siteData.url" @click="handleNewSite">Сохранить</main-button>
+        <div class="buttons">
+            <main-button class="dis-btn" @click="$router.push({ path: '/' })">Отмена</main-button>
+            <main-button :disabled="!siteData.url" @click="handleNewSite">Сохранить</main-button>
+        </div>
       </div>
     </div>
 </template>
@@ -66,8 +69,15 @@ import { sitesModule } from '../store/sitesModule';
             display: flex;
             flex-direction: column;
             color: #969696;
-            gap: 7px;
+            gap: 7px; 
         }
+    }
+    .buttons{
+        display: flex;
+        
+    }
+    .dis-btn{
+        background-color: rgba(150, 150, 150, 1);
     }
     .main-btn{
         width: max-content;
