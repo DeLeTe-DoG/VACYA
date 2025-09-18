@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using backend.Models;
 using backend.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc.Routing;
 
 public class WebsiteService
@@ -24,10 +25,18 @@ public class WebsiteService
         return _websites;
     }
 
-    public WebSiteDTO? Add(string url, string userName, string name)
+    public (bool Success, string Message, WebSiteDTO?) Add(string url, string userName, string name)
     {
         var user = _userService.GetByName(userName);
-        if (user == null) return null;
+
+        if (user.Sites.Any(s => s.URL == url))
+            return (false, $"Сайт с URL '{url}' уже существует", null);
+
+        if (user.Sites.Any(s => s.Name == name))
+            return (false, $"Сайт с именем '{name}' уже существует", null);
+
+        if (user == null) 
+            return (false, "Пользователь не найден", null);
         var site = new WebSiteDTO
         {
             Id = user.Sites.Count + 1,
@@ -38,7 +47,7 @@ public class WebsiteService
         };
 
         user.Sites.Add(site);
-        return site;
+        return (true, "Сайт успешно добавлен", site);
     }
     public async Task CheckWebsiteAsync(string URL)
     {

@@ -42,17 +42,18 @@ public class MonitoringBackgroundService : BackgroundService
                     int status = (int)response.StatusCode;
                     data.StatusCode = status;
 
-                        // Простой способ обработки статусов
-                        if (status >= 200 && status < 400)
-                        {
-                            site.IsAvailable = true;
-                            continue;
-                        }
-                        else
-                        {
-                            site.IsAvailable = false;
-                            data.ErrorMessage = response.ReasonPhrase;
-                        }
+                    // Простой способ обработки статусов
+                    if (status >= 200 && status < 400)
+                    {
+                        site.IsAvailable = true;
+                        continue;
+                    }
+                    else
+                    {
+                        
+                        site.IsAvailable = false;
+                        data.ErrorMessage = response.ReasonPhrase;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -60,16 +61,22 @@ public class MonitoringBackgroundService : BackgroundService
                     data.StatusCode = null;
                     data.ErrorMessage = ex.Message;
                 }
-
-                data.Id = $"{data.StatusCode}/{Guid.NewGuid()}";
-
+                if (data.StatusCode == null)
+                {
+                    data.StatusCode = 0; // Обозначаем, что статус не получен
+                    data.Id = "Inalid URL was provided";
+                }
+                else
+                {
+                    data.Id = $"{data.StatusCode}/{Guid.NewGuid()}";
+                }
                 // Добавляем проверку в отдельный список и только потом присоединяем
                 var newWebSiteData = site.WebSiteData.ToList();
                 newWebSiteData.Add(data);
                 site.WebSiteData = newWebSiteData;
 
                 // Считаем количество ошибок (404 и 500)
-                site.TotalErrors = site.WebSiteData.Count(d => d.StatusCode == 404 || d.StatusCode == 500);
+                site.TotalErrors = site.WebSiteData.Count(d => d.StatusCode == 404 || d.StatusCode == 500 || d.StatusCode == 0);
 
                 await Task.Delay(500, stoppingToken); // пауза между сайтами
             }

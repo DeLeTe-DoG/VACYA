@@ -114,9 +114,16 @@ public class UserController : ControllerBase
     public ActionResult<WebSiteDTO> Add([FromBody] WebSiteDTO site)
     {
         
-        if (User.Identity.Name == null) return NotFound("Введите имя пользователя");
         var userName = User.Identity.Name;
+        if (string.IsNullOrEmpty(userName))
+            return NotFound("Имя пользователя не найдено в токене.");
         var data = _WebSiteService.Add(site.URL, userName, site.Name);
-        return Ok(data);
+        if (!data.Success)
+        {
+            if (data.Message.Contains("уже существует"))
+                return Conflict(data.Message); // 409
+            return BadRequest(data.Message); // 400
+        }
+        return Ok(site);
     }
 }
