@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 using backend.Models;
 using backend.Services;
 
@@ -11,6 +12,7 @@ public class MonitoringBackgroundService : BackgroundService
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly UserService _userService;
+
     public MonitoringBackgroundService(IHttpClientFactory httpClientFactory, UserService userService)
     {
         _httpClientFactory = httpClientFactory;
@@ -18,38 +20,64 @@ public class MonitoringBackgroundService : BackgroundService
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+{
+    var client = _httpClientFactory.CreateClient();
+
+    while (!stoppingToken.IsCancellationRequested)
     {
-        var client = _httpClientFactory.CreateClient();
+        var users = _userService.GetAll();
 
-        while (!stoppingToken.IsCancellationRequested)
+        foreach (var user in users)
         {
-            var users = _userService.GetAll();
-            foreach (var user  in users)
+            foreach (var site in user.Sites.ToList())
             {
-                foreach (var site in user.Sites)
+                var data = new WebSiteDataDTO
                 {
-                    var data = new WebSiteDataDTO { };
-                    data.LastChecked = DateTime.UtcNow;
+                    LastChecked = DateTime.UtcNow
+                };
 
-                    try
-                    {
-                        var response = await client.GetAsync(site.URL, stoppingToken);
-                        data.StatusCode = (int)response.StatusCode;
-                        data.IsAvailable = response.IsSuccessStatusCode;
-                        data.ErrorMessage = data.IsAvailable ? null : response.ReasonPhrase;
-                    }
-                    catch (Exception ex)
-                    {
-                        data.IsAvailable = false;
-                        data.StatusCode = null;
-                        data.ErrorMessage = ex.Message;
-                    }
-                    site.WebSiteData.Add(data);
+                try
+                {
+                    var response = await client.GetAsync(site.URL, stoppingToken);
+                    int status = (int)response.StatusCode;
+                    data.StatusCode = status;
 
-                    await Task.Delay(500, stoppingToken); // небольшая пауза между сайтами
-                }   
+                        // Простой способ обработки статусов
+                        if (status >= 200 && status < 400)
+                        {
+                            site.IsAvailable = true;
+                            continue;
+                        }
+                        else
+                        {
+                            site.IsAvailable = false;
+                            data.ErrorMessage = response.ReasonPhrase;
+                        }
+                }
+                catch (Exception ex)
+                {
+                    site.IsAvailable = false;
+                    data.StatusCode = null;
+                    data.ErrorMessage = ex.Message;
+                }
+
+                data.Id = $"{data.StatusCode}/{Guid.NewGuid()}";
+
+                // Добавляем проверку в отдельный список и только потом присоединяем
+                var newWebSiteData = site.WebSiteData.ToList();
+                newWebSiteData.Add(data);
+                site.WebSiteData = newWebSiteData;
+
+                // Считаем количество ошибок (404 и 500)
+                site.TotalErrors = site.WebSiteData.Count(d => d.StatusCode == 404 || d.StatusCode == 500);
+
+                await Task.Delay(500, stoppingToken); // пауза между сайтами
             }
-            await Task.Delay(5000, stoppingToken); // цикл каждые 5 секунд
         }
+
+        await Task.Delay(5000, stoppingToken); // пауза между циклами проверки
     }
+}
+
+
 }

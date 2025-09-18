@@ -23,7 +23,6 @@ public class WebsiteService
     {
         return _websites;
     }
-    
 
     public WebSiteDTO? Add(string url, string userName, string name)
     {
@@ -34,6 +33,7 @@ public class WebsiteService
             Id = user.Sites.Count + 1,
             Name = name,
             URL = url,
+            TotalErrors = 0,
             WebSiteData = new()
         };
 
@@ -55,15 +55,16 @@ public class WebsiteService
         {
             var response = await client.GetAsync(URL);
             data.StatusCode = (int)response.StatusCode;
-            data.IsAvailable = response.IsSuccessStatusCode;
-            data.ErrorMessage = data.IsAvailable ? null : response.ReasonPhrase;
+            site.IsAvailable = response.IsSuccessStatusCode;
+            data.ErrorMessage = site.IsAvailable ? null : response.ReasonPhrase;
         }
         catch (Exception ex)
         {
-            data.IsAvailable = false;
+            site.IsAvailable = false;
             data.StatusCode = null;
             data.ErrorMessage = ex.Message;
         }
+        data.Id = data.StatusCode.ToString() + Guid.NewGuid().ToString();
         site.WebSiteData.Add(data);
     }
 
