@@ -7,6 +7,12 @@ namespace backend.Services;
 public class UserService : IUser
 {
   private readonly List<UserDTO> _users = new();
+  private readonly FilterService _filter;
+
+    public UserService(FilterService filter)
+    {
+        _filter = filter;
+    }
 
   public void Register(RegisterDTO dto)
   {
@@ -20,7 +26,7 @@ public class UserService : IUser
     _users.Add(user);
   }
 
-  public UserDTO LogIn(string name, string emal, string password)
+  public UserDTO LogIn(string name, string email, string password)
   {
     var user = _users.FirstOrDefault(u => u.Name == name);
     if (user == null)
@@ -34,8 +40,7 @@ public class UserService : IUser
 
   public UserDTO GetByName(string name)
   {
-    var user = _users.FirstOrDefault(u => u.Name == name);
-    return user;
+    return _users.FirstOrDefault(u => u.Name == name);
   }
 
   public List<UserDTO> GetAll()

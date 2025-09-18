@@ -19,24 +19,20 @@ public class WebsiteService
         _httpClientFactory = httpClientFactory;
     }
 
-    // public List<WebSiteDTO> GetAllSites(string userName) {
-    //     var user = _userService.GetByName(userName);
-    //     return user?.Sites ?? new List<WebSiteDTO>();
-    // }
-
     public List<WebSiteDTO> GetAll()
     {
         return _websites;
     }
     
 
-    public WebSiteDTO? Add(string url, string userName)
+    public WebSiteDTO? Add(string url, string userName, string name)
     {
         var user = _userService.GetByName(userName);
         if (user == null) return null;
         var site = new WebSiteDTO
         {
             Id = user.Sites.Count + 1,
+            Name = name,
             URL = url,
             WebSiteData = new()
         };

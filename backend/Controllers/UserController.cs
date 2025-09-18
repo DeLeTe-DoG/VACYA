@@ -4,6 +4,7 @@ using backend.JWT;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using backend.Services;
+using System.Globalization;
 
 [ApiController]
 [Route("api/user")]
@@ -11,11 +12,13 @@ public class UserController : ControllerBase
 {
     private readonly IUser _UserService;
     private readonly WebsiteService _WebSiteService;
+    private readonly FilterService _filter;
 
-    public UserController(IUser user, WebsiteService WebSiteService)
+    public UserController(IUser user, WebsiteService WebSiteService, FilterService filter)
     {
         _UserService = user;
         _WebSiteService = WebSiteService;
+        _filter = filter;
     }
 
     [HttpPost("register")]
@@ -74,12 +77,46 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    public class DateFilterRequest
+    {
+        public string DateFrom { get; set; }
+        public string DateTo { get; set; }
+    }
+    [HttpGet("me/dateFilter")]
+    [Authorize]
+    public IActionResult GetFilteredSites([FromBody] DateFilterRequest request)
+    {
+        var dateFromStr = request.DateFrom;
+        var dateToStr = request.DateTo;
+        if (string.IsNullOrWhiteSpace(dateFromStr) || string.IsNullOrWhiteSpace(dateToStr))
+        {
+            return BadRequest("Дата обязательна");
+        }
+        if (User.Identity.Name == null) return NotFound("Введите имя пользователя");
+        {
+            var userName = User.Identity.Name;
+            var user = _UserService.GetByName(userName);
+            if (user == null)
+            {
+                return NotFound("Пользователь не найден");
+            }
+            var dateFrom = DateTime.ParseExact(dateFromStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            var dateTo = DateTime.ParseExact(dateToStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            var filteredSites = _filter.DateFilter(user, dateFrom, dateTo);
+
+            return Ok(filteredSites);
+        }
+    }
+
     [HttpPost("me")]
     [Authorize]
     public ActionResult<WebSiteDTO> Add([FromBody] WebSiteDTO site)
     {
+        
+        if (User.Identity.Name == null) return NotFound("Введите имя пользователя");
         var userName = User.Identity.Name;
-        var data = _WebSiteService.Add(site.URL, userName);
+        var data = _WebSiteService.Add(site.URL, userName, site.Name);
         return Ok(data);
     }
 }
