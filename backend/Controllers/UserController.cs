@@ -82,31 +82,37 @@ public class UserController : ControllerBase
         public string DateFrom { get; set; }
         public string DateTo { get; set; }
     }
-    [HttpGet("me/dateFilter")]
+    [HttpPost("me/dateFilter")]
     [Authorize]
     public IActionResult GetFilteredSites([FromBody] DateFilterRequest request)
     {
         var dateFromStr = request.DateFrom;
         var dateToStr = request.DateTo;
+
         if (string.IsNullOrWhiteSpace(dateFromStr) || string.IsNullOrWhiteSpace(dateToStr))
         {
             return BadRequest("Дата обязательна");
         }
         if (User.Identity.Name == null) return NotFound("Введите имя пользователя");
+        
+        var userName = User.Identity.Name;
+        var user = _UserService.GetByName(userName);
+
+        if (user == null)
         {
-            var userName = User.Identity.Name;
-            var user = _UserService.GetByName(userName);
-            if (user == null)
-            {
-                return NotFound("Пользователь не найден");
-            }
-            var dateFrom = DateTime.ParseExact(dateFromStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            var dateTo = DateTime.ParseExact(dateToStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-
-            var filteredSites = _filter.DateFilter(user, dateFrom, dateTo);
-
-            return Ok(filteredSites);
+            return NotFound("Пользователь не найден");
         }
+        if (user.Sites == null || user.Sites.Count == 0)
+        {
+            return NotFound("Пожалуйста, добавьте сайт для мониторинга");
+        }
+
+        var dateFrom = DateTime.ParseExact(dateFromStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+        var dateTo = DateTime.ParseExact(dateToStr, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+        var filteredSites = _filter.DateFilter(user, dateFrom, dateTo);
+
+        return Ok(filteredSites);
     }
 
     [HttpPost("me")]

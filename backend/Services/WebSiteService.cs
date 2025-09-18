@@ -34,9 +34,10 @@ public class WebsiteService
 
         if (user.Sites.Any(s => s.Name == name))
             return (false, $"Сайт с именем '{name}' уже существует", null);
-
         if (user == null) 
             return (false, "Пользователь не найден", null);
+
+            
         var site = new WebSiteDTO
         {
             Id = user.Sites.Count + 1,
