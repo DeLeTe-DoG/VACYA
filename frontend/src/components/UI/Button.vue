@@ -1,5 +1,5 @@
 <template>
-    <button class="main-btn">Click here!</button>
+    <button class="main-btn"><slot></slot></button>
 </template>
 
 <script>
@@ -9,5 +9,21 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .main-btn{
+        cursor: pointer;
+        height: 45px;
+        font-size: 16px;
+        color: #fff;
+        padding: 0 30px;
+        background-color: #418CFF;
+        border: none;
+        outline: none;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:disabled{
+            background-color: #a3c3f5;
+        }
+    }
 </style>

@@ -81,7 +81,7 @@
           Настройки
         </div>
       </button>
-      <button class="pen" @click="logOut">
+      <button class="pen" @click="logOut()">
         <div class="pen__heading">
           <svg
             width="26"
@@ -127,22 +127,22 @@ export default {
         },
         {
           id: 2,
-          title: "Проверки",
+          title: "Планы и отчёты",
           href: "/tests", //тут по базовому адресу будет история проверок
           family: "tests",
           children: [
             {
               id: 21,
-              title: "Запланировать проверку",
+              title: "Добавить отчёт",
               href: "/tests/plan-test",
               family: "tests",
             },
-            {
-              id: 22,
-              title: "Отчет о проверке",
-              href: "/tests/add-report",
-              family: "tests",
-            },
+            // {
+            //   id: 22,
+            //   title: "Отчет о проверке",
+            //   href: "/tests/add-report",
+            //   family: "tests",
+            // },
           ],
         },
         // {

@@ -23,7 +23,7 @@ export default {
             type: "line",
             name: "loading files",
             data: [100, 50, 40, 110],
-            smooth: true,
+            // smooth: true,
             // markPoint: {
             //   data: [
             //     { type: "max", name: "Max" },
@@ -38,7 +38,7 @@ export default {
             type: "line",
             name: "all loading",
             data: [105, 52, 20, 78],
-            smooth: true,
+            // smooth: true,
           },
         ],
         tooltip: {

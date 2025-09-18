@@ -4,10 +4,12 @@ import axios from "axios";
 import { api } from "../api";
 
 import { authModule } from "./authModule";
+import { sitesModule } from "./sitesModule";
 
 export default createStore({
     modules: {
         auth: authModule,
+        sites: sitesModule,
     },
     state: {
         visibleMenu: true,
