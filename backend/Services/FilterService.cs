@@ -33,21 +33,6 @@ public class FilterService
            }).Where(site => site.WebSiteData.Any())
             .Where(site => site.TotalErrors > 0)
             .ToList();  
-          // .Select(site => new WebSiteDTO
-          // {
-          //   Id = site.Id,
-          //   URL = site.URL,
-          //   WebSiteData = site.WebSiteData
-          //         .Where(d =>
-          //             (d.StatusCode == 404 || d.StatusCode == 500) &&
-          //             d.LastChecked.Date >= dateFrom &&
-          //             d.LastChecked.Date <= dateTo
-          //         )
-          //         .ToList()
-          // })
-          // .Where(site => site.WebSiteData.Any())        
-          // .ToList();
-
       return filteredSites;
   }
 }

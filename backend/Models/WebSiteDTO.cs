@@ -5,6 +5,8 @@ public class WebSiteDTO
     public int Id { get; set; }
     public string URL { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+    public string ExpectedContent { get; set; } = string.Empty;
+    public string ResponseTime { get; set; } = string.Empty;
     public bool IsAvailable { get; set; }
     public string DNS { get; set; } = string.Empty;
     public string SSL { get; set; } = string.Empty;

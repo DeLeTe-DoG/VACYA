@@ -11,6 +11,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Text;
 
 public class MonitoringBackgroundService : BackgroundService
 {
@@ -59,11 +62,11 @@ public class MonitoringBackgroundService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var client = _httpClientFactory.CreateClient();
-
+    
         while (!stoppingToken.IsCancellationRequested)
         {
             var users = _userService.GetAll();
-
+    
             foreach (var user in users)
             {
                 foreach (var site in user.Sites.ToList())
@@ -72,71 +75,95 @@ public class MonitoringBackgroundService : BackgroundService
                     {
                         LastChecked = DateTime.UtcNow
                     };
-
-                    //  1. Проверка URL перед всем остальным
+    
+                    // 1. Проверка корректности URL
                     if (!Uri.TryCreate(site.URL, UriKind.Absolute, out var uri))
                     {
                         data.StatusCode = 0;
                         data.ErrorMessage = "Некорректный URL";
-                        data.Id = $"INVALID_URL/";
+                        data.Id = $"INVALID_URL/{Guid.NewGuid()}";
                         site.IsAvailable = false;
-                        site.TotalErrors++;
-
                         site.WebSiteData = site.WebSiteData.Append(data).ToList();
+                        site.TotalErrors = site.WebSiteData.Count(e => !string.IsNullOrWhiteSpace(e.ErrorMessage));
                         continue;
                     }
-
+    
                     try
                     {
-                        //  2. Проверка DNS
+                        // 2. Проверка DNS
                         bool dnsOK = checkDNS(uri.Host);
                         if (!dnsOK)
                         {
                             data.StatusCode = 0;
                             data.ErrorMessage = "DNS не найден";
-                            data.Id = $"DNS_ERROR";
-                            site.DNS = "DNS не найден";
+                            data.Id = $"DNS_ERROR/{Guid.NewGuid()}";
                             site.IsAvailable = false;
-                            site.TotalErrors++;
-
+                            site.DNS = "DNS не найден";
+    
                             site.WebSiteData = site.WebSiteData.Append(data).ToList();
+                            site.TotalErrors = site.WebSiteData.Count(e => !string.IsNullOrWhiteSpace(e.ErrorMessage));
                             continue;
                         }
                         site.DNS = "OK";
-
-                        //  3. Проверка SSL (если HTTPS)
+    
+                        // 3. Проверка SSL (если HTTPS)
                         bool sslOk = uri.Scheme == Uri.UriSchemeHttps ? CheckSslCertificate(uri.Host) : true;
                         if (!sslOk)
                         {
                             data.StatusCode = 0;
                             data.ErrorMessage = "SSL сертификат недействителен";
                             data.Id = $"SSL_ERROR/{Guid.NewGuid()}";
-                            site.SSL = "Сертификат недействителен";
                             site.IsAvailable = false;
-                            site.TotalErrors++;
-
+                            site.SSL = "Сертификат недействителен";
+    
                             site.WebSiteData = site.WebSiteData.Append(data).ToList();
+                            site.TotalErrors = site.WebSiteData.Count(e => !string.IsNullOrWhiteSpace(e.ErrorMessage));
                             continue;
                         }
                         site.SSL = "OK";
-
-                        //  4. HTTP-запрос
+    
+                        // 4. HTTP-запрос с замером времени отклика
+                        var stopwatch = Stopwatch.StartNew();
                         var response = await client.GetAsync(uri, stoppingToken);
+                        stopwatch.Stop();
+                        site.ResponseTime = $"{stopwatch.ElapsedMilliseconds} ms";
+    
                         int status = (int)response.StatusCode;
-
                         data.StatusCode = status;
                         data.Id = $"{status}/{Guid.NewGuid()}";
-
+    
+                        // Проверка статуса HTTP
                         if (status >= 200 && status < 400)
                         {
                             site.IsAvailable = true;
-                            continue;
                         }
                         else
                         {
                             site.IsAvailable = false;
-                            data.ErrorMessage = response.ReasonPhrase;
-                            site.TotalErrors++;
+                            data.ErrorMessage = response.ReasonPhrase ?? $"HTTP Error {status}";
+                        }
+    
+                        // 5. Проверка содержимого (если задано expectedContent)
+                        if (!string.IsNullOrWhiteSpace(site.ExpectedContent))
+                        {
+                            try
+                            {
+                                var bytes = await response.Content.ReadAsByteArrayAsync(stoppingToken);
+                                var content = Encoding.UTF8.GetString(bytes);
+    
+                                if (!content.Contains(site.ExpectedContent, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    data.ErrorMessage = "Ожидаемый контент не найден";
+                                    data.Id = $"CONTENT_ERROR/{Guid.NewGuid()}";
+                                    site.IsAvailable = false;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                data.ErrorMessage = $"Ошибка при проверке контента: {ex.Message}";
+                                data.Id = $"CONTENT_EXCEPTION/{Guid.NewGuid()}";
+                                site.IsAvailable = false;
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -145,15 +172,17 @@ public class MonitoringBackgroundService : BackgroundService
                         data.ErrorMessage = ex.Message;
                         data.Id = $"EXCEPTION/{Guid.NewGuid()}";
                         site.IsAvailable = false;
-                        site.TotalErrors++;
                     }
-
+    
+                    // Добавляем запись и пересчитываем ошибки
                     site.WebSiteData = site.WebSiteData.Append(data).ToList();
+                    site.TotalErrors = site.WebSiteData.Count(e => !string.IsNullOrWhiteSpace(e.ErrorMessage));
+    
                     await Task.Delay(500, stoppingToken);
                 }
             }
-
-            await Task.Delay(5000, stoppingToken); 
+    
+            await Task.Delay(5000, stoppingToken);
         }
     }
 }

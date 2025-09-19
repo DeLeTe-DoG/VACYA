@@ -25,7 +25,7 @@ public class WebsiteService
         return _websites;
     }
 
-    public (bool Success, string Message, WebSiteDTO?) Add(string url, string userName, string name)
+    public (bool Success, string Message, WebSiteDTO?) Add(string url, string userName, string name, string expectedContent)
     {
         var user = _userService.GetByName(userName);
 
@@ -43,6 +43,7 @@ public class WebsiteService
             Id = user.Sites.Count + 1,
             Name = name,
             URL = url,
+            ExpectedContent = expectedContent,
             TotalErrors = 0,
             WebSiteData = new()
         };

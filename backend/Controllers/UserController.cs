@@ -123,7 +123,7 @@ public class UserController : ControllerBase
         var userName = User.Identity.Name;
         if (string.IsNullOrEmpty(userName))
             return NotFound("Имя пользователя не найдено в токене.");
-        var data = _WebSiteService.Add(site.URL, userName, site.Name);
+        var data = _WebSiteService.Add(site.URL, userName, site.Name, site.ExpectedContent);
         if (!data.Success)
         {
             if (data.Message.Contains("уже существует"))
