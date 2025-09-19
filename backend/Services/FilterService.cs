@@ -1,38 +1,40 @@
 using System;
-using System.Globalization;
-using System.Reflection.Metadata.Ecma335;
+using System.Collections.Generic;
+using System.Linq;
 using backend.Models;
 
-namespace backend.Services;
-
-public class FilterService
+namespace backend.Services
 {
-  private List<WebSiteDTO> _sites;
-  private WebSiteDataDTO _site;
-  public List<WebSiteDTO> DateFilter(UserDTO user, DateTime dateFrom, DateTime dateTo)
-  {
-    var filteredSites = user.Sites
-           .Select(site =>
-           {
-             var filteredData = site.WebSiteData
-                 .Where(d =>
-                     (d.StatusCode == 404 || d.StatusCode == 500) &&
-                     d.LastChecked.Date >= dateFrom &&
-                     d.LastChecked.Date <= dateTo
-                 )
-                 .ToList();
+    public class FilterService
+    {
+        public List<WebSiteDTO> DateFilter(UserDTO user, DateTime dateFrom, DateTime dateTo)
+        {
+            var dateFromStart = dateFrom.Date;
+            var dateToEnd = dateTo.Date.AddDays(1).AddTicks(-1);
 
-             return new WebSiteDTO
-             {
-               Id = site.Id,
-               Name = site.Name,
-               URL = site.URL,
-               WebSiteData = filteredData,
-               TotalErrors = filteredData.Count(d => d.StatusCode == 404 || d.StatusCode == 500)
-             };
-           }).Where(site => site.WebSiteData.Any())
-            .Where(site => site.TotalErrors > 0)
-            .ToList();  
-      return filteredSites;
-  }
+            var filteredSites = user.Sites
+                .Select(site =>
+                {
+                    // Фильтруем данные только по дате
+                    var filteredData = site.WebSiteData
+                        .Where(d => d.LastChecked >= dateFromStart &&
+                                    d.LastChecked <= dateToEnd)
+                        .ToList();
+
+                    return new WebSiteDTO
+                    {
+                        Id = site.Id,
+                        Name = site.Name,
+                        URL = site.URL,
+                        WebSiteData = filteredData,
+                        TotalErrors = filteredData.Count
+                    };
+                })
+                // Оставляем только сайты, у которых есть данные за период
+                .Where(site => site.WebSiteData.Any())
+                .ToList();
+
+            return filteredSites;
+        }
+    }
 }
