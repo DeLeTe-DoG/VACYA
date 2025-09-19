@@ -114,6 +114,22 @@ public class UserController : ControllerBase
 
         return Ok(filteredSites);
     }
+    [HttpPost("me/addScenario")]
+    [Authorize]
+    public ActionResult<TestScenarioDTO> AddScenario([FromBody] TestScenarioDTO scenario)
+    {
+        var userName = User.Identity.Name;
+        if (string.IsNullOrEmpty(userName))
+            return NotFound("Имя пользователя не найдено в токене.");
+        var data = _WebSiteService.AddScenario(userName,scenario.Name, scenario.CheckXml, scenario.HttpMethod, scenario.Url, scenario.Body, scenario.Headers, scenario.ExpectedContent, scenario.CheckJson);
+        if (!data.Success)
+        {
+            if (data.Message.Contains("уже существует"))
+                return Conflict(data.Message); // 409
+            return BadRequest(data.Message); // 400
+        }
+        return Ok(scenario);
+    }
 
     [HttpPost("me")]
     [Authorize]

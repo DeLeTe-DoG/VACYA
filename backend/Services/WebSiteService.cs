@@ -25,7 +25,8 @@ public class WebsiteService
         return _websites;
     }
 
-    public (bool Success, string Message, WebSiteDTO?) Add(string url, string userName, string name, string expectedContent)
+    public (bool Success, string Message, WebSiteDTO?) Add(
+        string url, string userName, string name, string expectedContent)
     {
         var user = _userService.GetByName(userName);
 
@@ -34,10 +35,9 @@ public class WebsiteService
 
         if (user.Sites.Any(s => s.Name == name))
             return (false, $"Сайт с именем '{name}' уже существует", null);
-        if (user == null) 
+        if (user == null)
             return (false, "Пользователь не найден", null);
 
-            
         var site = new WebSiteDTO
         {
             Id = user.Sites.Count + 1,
@@ -45,10 +45,46 @@ public class WebsiteService
             URL = url,
             ExpectedContent = expectedContent,
             TotalErrors = 0,
-            WebSiteData = new()
+            WebSiteData = new(),
+            TestsData = new()
         };
 
         user.Sites.Add(site);
         return (true, "Сайт успешно добавлен", site);
     }
+
+    public (bool Success, string Message, TestScenarioDTO?) AddScenario(
+        string userName, string name, bool checkXml, string httpMethod, string url, 
+        string? body, Dictionary<string, string>? headers, string? expectedContent, bool checkJson
+    )
+    {
+        var user = _userService.GetByName(userName);
+        if (user == null)
+            return (false, "Пользователь не найден", null);
+    
+        // Ищем сайт, к которому добавляем сценарий
+        var site = user.Sites.FirstOrDefault(s => s.URL == url);
+        if (site == null)
+            return (false, $"Сайт с URL '{url}' не найден у пользователя", null);
+    
+        if (site.TestScenarios.Any(s => s.Name == name))
+            return (false, $"Тестовый сценарий с именем '{name}' уже существует", null);
+    
+        var scenario = new TestScenarioDTO
+        {
+            Name = name,
+            Url = url,
+            HttpMethod = httpMethod,
+            Body = body,
+            Headers = headers ?? new(),
+            ExpectedContent = expectedContent,
+            CheckJson = checkJson,
+            CheckXml = checkXml
+        };
+    
+        site.TestScenarios.Add(scenario);
+    
+        return (true, "Тестовый сценарий успешно добавлен", scenario);
+    }
+
 }

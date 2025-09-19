@@ -12,4 +12,6 @@ public class WebSiteDTO
     public string SSL { get; set; } = string.Empty;
     public int TotalErrors { get; set; } = 0;
     public List<WebSiteDataDTO> WebSiteData { get; set; } = [];
+    public List<TestScenarioDTO> TestScenarios { get; set; } = [];
+    public List<ScenarioResultDTO> TestsData { get; set; } = [];
 }

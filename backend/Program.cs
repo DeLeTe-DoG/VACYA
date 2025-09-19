@@ -25,6 +25,7 @@ builder.Services.AddSingleton<IUser>(sp => sp.GetRequiredService<UserService>())
 builder.Services.AddSingleton(new List<WebSiteDTO>());
 builder.Services.AddSingleton<WebsiteService>();
 builder.Services.AddSingleton<FilterService>();
+builder.Services.AddSingleton<TestScenarioService>();
 
 
 builder.Services.AddControllers();
