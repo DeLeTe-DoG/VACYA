@@ -11,6 +11,15 @@
             <button class="btn-export">Экспорт</button>
             <main-button @click="$router.push({ path: '/tests/plan-test' })" >Добавить отчёт</main-button>
         </form>
+        <div class="List">
+            <h4>Статус</h4>
+            <h4>Статус</h4>
+            <h4>Статус</h4>
+            <h4>Статус</h4>
+            <h4>Статус</h4>
+            <h4>Статус</h4>
+            <h4>Статус</h4>
+        </div>
       </div>
     </div>
 </template>
@@ -67,14 +76,20 @@ import { sitesModule } from '../store/sitesModule';
         cursor: pointer;
         height: 45px;
         font-size: 16px;
-        color: #fff;
+        color: #000000;
         padding: 0 30px;
-        background-color: #418CFF;
-        border: none;
-        outline: none;
+        background-color: #ffffff;
+        border: 2px solid #000;
+        border-color: lightgray;
         border-radius: 8px;
+        box-shadow: none;
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    .List{
+        display: flex;
+        gap: 25px;
+
     }
 </style>
