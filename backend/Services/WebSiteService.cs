@@ -50,39 +50,4 @@ public class WebsiteService
         user.Sites.Add(site);
         return (true, "Сайт успешно добавлен", site);
     }
-    public async Task CheckWebsiteAsync(string URL)
-    {
-
-        var site = _websites.FirstOrDefault(s => s.URL == URL);
-        if (site == null) return;
-
-        var client = _httpClientFactory.CreateClient();
-        var data = new WebSiteDataDTO
-        {
-            LastChecked = DateTime.UtcNow
-        };
-        try
-        {
-            var response = await client.GetAsync(URL);
-            data.StatusCode = (int)response.StatusCode;
-            site.IsAvailable = response.IsSuccessStatusCode;
-            data.ErrorMessage = site.IsAvailable ? null : response.ReasonPhrase;
-        }
-        catch (Exception ex)
-        {
-            site.IsAvailable = false;
-            data.StatusCode = null;
-            data.ErrorMessage = ex.Message;
-        }
-        data.Id = data.StatusCode.ToString() + Guid.NewGuid().ToString();
-        site.WebSiteData.Add(data);
-    }
-
-    public async Task CheckAllAsync()
-    {
-        foreach (var site in _websites)
-        {
-            await CheckWebsiteAsync(site.URL);
-        };
-    }
 }
