@@ -38,7 +38,7 @@
             </div>
           </div>
         </div>
-        <MainChart v-if="sites" :chartData="sites.find(site => site.id == activeSite).webSiteData" />
+        <MainChart v-if="sites && activeSite" :chartData="sites.find(site => site.id == activeSite).webSiteData" />
       </div>
     </div>
     <div class="column-wrapper">
