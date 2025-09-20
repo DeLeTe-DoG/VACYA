@@ -8,7 +8,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .main-btn{
         cursor: pointer;
         height: 45px;
@@ -25,5 +25,9 @@
         &:disabled{
             background-color: #a3c3f5;
         }
+    }
+    .small-btn{
+        height: 30px;
+        padding: 0 15px;
     }
 </style>

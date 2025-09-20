@@ -1,15 +1,29 @@
 import axios from "axios";
 import { api } from "../api";
+import { router } from "../router";
 
 export const sitesModule = {
     namespaced: true,
 
     state: {
-        sites: [],
+        sites: null,
+        testScenarios: [],
+        activeSite: null,
     },
     mutations: {
         setSites(state, data) {
             state.sites = data
+        },
+        setTestScenarios(state, data) {
+            state.testScenarios = data
+        },
+        setActiveSite(state, site_id) {
+            console.log(site_id)
+            if(site_id) {
+                state.activeSite = site_id
+            } else {
+                state.activeSite = $route.query.project
+            }
         }
     },
     actions: {

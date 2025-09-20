@@ -60,8 +60,6 @@ import { sitesModule } from '../store/sitesModule';
 
 <style lang="scss" scoped>
     .form{
-        display: flex;
-        flex-direction: column;
         gap: 25px;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
